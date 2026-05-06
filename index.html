@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Better_Ansh Server Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ba-primary: #22c55e;
+      --ba-primary-glow: rgba(34, 197, 94, 0.2);
+      --bg-base: #030712;
+      --bg-card: rgba(30, 41, 59, 0.6);
+      --border-light: rgba(255, 255, 255, 0.08);
+      --glass: blur(12px) saturate(180%);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background-color: var(--bg-base); color: #fff; font-family: 'Outfit', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .bg-mesh { position: fixed; inset: 0; z-index: -1; background: radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.1), transparent 60%); }
+    
+    .hub-header { text-align: center; margin-bottom: 4rem; }
+    .hub-header h1 { font-size: 4rem; font-weight: 900; background: linear-gradient(90deg, #fff, var(--ba-primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 20px var(--ba-primary-glow)); }
+    .hub-header p { color: #73859e; font-size: 1.2rem; margin-top: 0.5rem; letter-spacing: 2px; text-transform: uppercase; }
+
+    .server-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; max-width: 1200px; width: 100%; padding: 0 2rem; }
+    
+    .server-card {
+      background: var(--bg-card); border: 2px solid var(--border-light); border-radius: 24px; padding: 3rem; text-align: center; cursor: pointer; transition: 0.3s; text-decoration: none; color: #fff; position: relative; overflow: hidden;
+    }
+    .server-card:hover { transform: translateY(-10px); border-color: var(--ba-primary); box-shadow: 0 20px 50px rgba(0,229,255,0.2); }
+    .server-card::after { content:''; position:absolute; inset:0; background:radial-gradient(circle at top right, var(--ba-primary-glow), transparent 60%); opacity:0; transition:0.3s; }
+    .server-card:hover::after { opacity:1; }
+
+    .sc-icon { font-size: 5rem; margin-bottom: 1rem; filter: drop-shadow(0 0 15px rgba(0,229,255,0.5)); position: relative; z-index: 2; }
+    .sc-title { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; position: relative; z-index: 2; }
+    .sc-desc { color: #73859e; font-weight: 500; position: relative; z-index: 2; }
+
+    .server-card.disabled { opacity: 0.5; cursor: not-allowed; border-color: var(--border-light); }
+    .server-card.disabled:hover { transform: none; box-shadow: none; border-color: var(--border-light); }
+    .server-card.disabled::after { display: none; }
+    .server-card.disabled .sc-icon { filter: grayscale(1); }
+  </style>
+</head>
+<body>
+  <div class="bg-mesh"></div>
+
+  <div class="hub-header">
+    <h1>Better_Ansh Network</h1>
+    <p>Select a Server to View Stats</p>
+  </div>
+
+  <div class="server-grid">
+    <!-- Active Server -->
+    <a href="better_life.html" class="server-card">
+      <div class="sc-icon">🌍</div>
+      <div class="sc-title">Better Life</div>
+      <div class="sc-desc">Season 1 • God-Tier AI Tracking</div>
+    </a>
+
+    <!-- Future Server Placeholder -->
+    <div class="server-card disabled">
+      <div class="sc-icon">🔒</div>
+      <div class="sc-title">Coming Soon</div>
+      <div class="sc-desc">Awaiting New World Data...</div>
+    </div>
+  </div>
+
+</body>
+</html>
