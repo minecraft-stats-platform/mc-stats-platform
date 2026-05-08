@@ -85,11 +85,20 @@ function renderPlayersGrid(filter = '') {
   const filtered = PLAYERS.filter(p => p.name.toLowerCase().includes(f));
   
   const favorites = JSON.parse(localStorage.getItem('mc_favorites') || '[]');
-  
+  const sortSelect = $('playerSort');
+  const sortType = sortSelect ? sortSelect.value : 'score';
+
   filtered.sort((a, b) => {
     const aFav = favorites.includes(a.uuid) ? 1 : 0;
     const bFav = favorites.includes(b.uuid) ? 1 : 0;
     if (bFav !== aFav) return bFav - aFav;
+    
+    // Sort by selected type
+    if (sortType === 'kills') return b.total_mob_kills - a.total_mob_kills;
+    if (sortType === 'playtime') return b.play_time_hrs - a.play_time_hrs;
+    if (sortType === 'kd') return b.kd - a.kd;
+    
+    // Default: Score
     return b.bas_score - a.bas_score;
   });
   
@@ -130,6 +139,9 @@ function renderPlayersGrid(filter = '') {
   `}).join('');
 }
 $('globalSearch').addEventListener('input', (e) => renderPlayersGrid(e.target.value));
+if ($('playerSort')) {
+  $('playerSort').addEventListener('change', () => renderPlayersGrid($('globalSearch').value));
+}
 
 // ── DASHBOARD V3 ─────────────────────────────────────────────────────
 function renderDashboard() {

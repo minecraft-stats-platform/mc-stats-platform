@@ -16,9 +16,14 @@ target_stats_dir = DEFAULT_STATS_DIR
 target_output_js = DEFAULT_OUTPUT_JS
 
 if len(sys.argv) > 1:
-    # If user provides a world path, look for stats inside it
+    # If user provides a path
     world_path = sys.argv[1]
-    target_stats_dir = os.path.join(world_path, "players", "stats")
+    if os.path.basename(os.path.normpath(world_path)) == 'stats':
+        target_stats_dir = world_path
+    elif os.path.exists(os.path.join(world_path, "players", "stats")):
+        target_stats_dir = os.path.join(world_path, "players", "stats")
+    else:
+        target_stats_dir = os.path.join(world_path, "stats")
 
 if len(sys.argv) > 2:
     # If user provides a specific .js filename (like data_new.js)

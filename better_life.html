@@ -63,11 +63,19 @@
         </div>
       </div>
 
-      <!-- Search -->
-      <div class="hero">
-        <div class="search-wrap">
-          <span class="search-icon">🔍</span>
-          <input type="text" id="globalSearch" placeholder="Search for a player..." autocomplete="off"/>
+      <!-- Search & Sort -->
+      <div class="hero" style="display:flex; flex-direction:column; align-items:center;">
+        <div class="search-wrap" style="display:flex; gap:10px; width:100%; max-width:600px; padding:0;">
+          <div style="flex:1; position:relative;">
+            <span class="search-icon" style="position:absolute; left:1rem; top:50%; transform:translateY(-50%); z-index:2;">🔍</span>
+            <input type="text" id="globalSearch" placeholder="Search for a player..." autocomplete="off" style="width:100%; padding:0.8rem 1rem 0.8rem 3rem; border-radius:30px; border:2px solid var(--border-light); background:var(--bg-card); color:#fff; font-family:var(--font-main);"/>
+          </div>
+          <select id="playerSort" style="background:var(--bg-card); color:#fff; border:2px solid var(--border-light); border-radius:30px; padding:0.8rem 1.5rem; font-family:var(--font-main); outline:none; cursor:pointer;">
+            <option value="score">Sort: Score</option>
+            <option value="kills">Sort: Kills</option>
+            <option value="playtime">Sort: Playtime</option>
+            <option value="kd">Sort: K/D Ratio</option>
+          </select>
         </div>
       </div>
 
