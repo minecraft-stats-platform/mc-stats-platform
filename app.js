@@ -1006,105 +1006,122 @@ $('btnDownload').addEventListener('click', () => {
 
 // ── AI CHATBOT SYSTEM ──────────────────────────────────────────────────
 const chatWidget = $('chatWidget');
-$('chatFab').addEventListener('click', () => chatWidget.classList.add('open'));
-$('chatClose').addEventListener('click', () => chatWidget.classList.remove('open'));
+if (chatWidget) {
+  const chatFab = $('chatFab');
+  const chatClose = $('chatClose');
+  if (chatFab) chatFab.addEventListener('click', () => chatWidget.classList.add('open'));
+  if (chatClose) chatClose.addEventListener('click', () => chatWidget.classList.remove('open'));
 
-function appendMessage(sender, text) {
-  const div = document.createElement('div');
-  div.className = `chat-msg ${sender}`;
-  div.innerHTML = `<div class="chat-bubble">${text}</div>`;
-  $('chatBody').appendChild(div);
-  $('chatBody').scrollTop = $('chatBody').scrollHeight;
+  function appendMessage(sender, text) {
+    const div = document.createElement('div');
+    div.className = `chat-msg ${sender}`;
+    div.innerHTML = `<div class="chat-bubble">${text}</div>`;
+    const body = $('chatBody');
+    if (body) {
+      body.appendChild(div);
+      body.scrollTop = body.scrollHeight;
+    }
+  }
+
+  function getAiResponse(msg) {
+    const query = msg.toLowerCase();
+    
+    // Server-wide stats
+    if (query.includes('how many players')) return `There are currently **${PLAYERS.length}** legendary players tracked on this server.`;
+    if (query.includes('total kills')) {
+      const kills = PLAYERS.reduce((s,p) => s + p.total_mob_kills, 0);
+      return `The server has a total of **${fmtNum(kills)}** mob kills. Absolute carnage! ⚔️`;
+    }
+    if (query.includes('total deaths')) {
+      const deaths = PLAYERS.reduce((s,p) => s + p.deaths, 0);
+      return `Players have died **${fmtNum(deaths)}** times. RIP. 🪦`;
+    }
+    if (query.includes('server status') || query.includes('how is the server')) {
+      const kills = PLAYERS.reduce((s,p) => s + p.total_mob_kills, 0);
+      return kills > 10000 ? "The server is in a **High Activity** state! Players are dominating the world." : "The server is currently stable and peaceful.";
+    }
+
+    // Find player mentioned
+    let target = null;
+    for(let p of PLAYERS) {
+      if(query.includes(p.name.toLowerCase())) {
+        target = p; break;
+      }
+    }
+
+    if (query.includes('who is the best') || query.includes('who is rank 1') || query.includes('top player')) {
+      const best = [...PLAYERS].sort((a,b) => b.bas_score - a.bas_score)[0];
+      return `Currently, **${best.name}** is the GOAT with an Ultimate Score of **${fmtNum(best.bas_score)}**! They are a ${best.rank.title}.`;
+    }
+    
+    if (query.includes('most kills') || query.includes('highest kills')) {
+      const best = [...PLAYERS].sort((a,b) => b.total_mob_kills - a.total_mob_kills)[0];
+      return `**${best.name}** is the deadliest, with **${fmtNum(best.total_mob_kills)}** kills!`;
+    }
+    
+    if (target) {
+      if (query.includes('weakness')) {
+        const insight = target.insights.find(i => i.type === 'bad');
+        if (insight) return `**${target.name}**'s weakness: ${insight.text}`;
+        return `**${target.name}** is looking solid, no major weaknesses detected by the AI.`;
+      }
+      if (query.includes('stats') || query.includes('how good is')) {
+        return `**${target.name}** [${target.rank.title}]:\n• Score: ${fmtNum(target.bas_score)}\n• K/D: ${target.kd}\n• Mined: ${fmtNum(target.blocks_mined)}`;
+      }
+      return `I see you're asking about **${target.name}**. They have a **${target.playstyle.split('|')[0]}** playstyle and are ranked **${target.rank.title}**.`;
+    }
+
+    return "I am the Better_Ansh AI! I can tell you about server records, player stats, or analyze someone's weaknesses. Try asking 'Who is the best?' or 'What are Better_Ansh's stats?'";
+  }
+
+  const chatSend = $('chatSend');
+  const chatInput = $('chatInput');
+  
+  if (chatSend && chatInput) {
+    const handleSend = async () => {
+      const val = chatInput.value.trim();
+      if(!val) return;
+      appendMessage('user', val);
+      chatInput.value = '';
+      
+      const typingId = 'typing-' + Date.now();
+      const div = document.createElement('div');
+      div.className = `chat-msg bot`;
+      div.id = typingId;
+      div.innerHTML = `<div class="chat-bubble" style="opacity:0.7"><em>Analyzing...</em></div>`;
+      $('chatBody').appendChild(div);
+      $('chatBody').scrollTop = $('chatBody').scrollHeight;
+
+      try {
+        const miniStats = PLAYERS.slice(0, 15).map(p => ({ name: p.name, bas: p.bas_score, kills: p.total_mob_kills, deaths: p.deaths }));
+        
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: val, statsContext: JSON.stringify(miniStats) })
+        });
+        
+        const typingElem = document.getElementById(typingId);
+        if (typingElem) typingElem.remove();
+
+        if (!res.ok) throw new Error("Offline");
+        
+        const data = await res.json();
+        appendMessage('bot', data.reply.replace(/\n/g, '<br>'));
+        
+      } catch (err) {
+        const typingElem = document.getElementById(typingId);
+        if (typingElem) typingElem.remove();
+        
+        const reply = getAiResponse(val);
+        appendMessage('bot', reply.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'));
+      }
+    };
+
+    chatSend.addEventListener('click', handleSend);
+    chatInput.addEventListener('keypress', e => { if(e.key === 'Enter') handleSend(); });
+  }
 }
-
-function getAiResponse(msg) {
-  const query = msg.toLowerCase();
-  
-  // Find player mentioned
-  let target = null;
-  for(let p of PLAYERS) {
-    if(query.includes(p.name.toLowerCase())) {
-      target = p; break;
-    }
-  }
-
-  // Answer patterns
-  if (query.includes('who is the best') || query.includes('who is rank 1')) {
-    const best = [...PLAYERS].sort((a,b) => b.bas_score - a.bas_score)[0];
-    return `Currently, **${best.name}** is Rank 1 with an Ultimate Score of ${fmtNum(best.bas_score)}! They are an absolute ${best.rank.title}.`;
-  }
-  
-  if (query.includes('most kills') || query.includes('highest kills')) {
-    const best = [...PLAYERS].sort((a,b) => b.total_mob_kills - a.total_mob_kills)[0];
-    return `**${best.name}** has the most blood on their hands with **${fmtNum(best.total_mob_kills)}** total mob kills!`;
-  }
-  
-  if (query.includes('most deaths') || query.includes('worst player') || query.includes('noob')) {
-    const worst = [...PLAYERS].sort((a,b) => b.deaths - a.deaths)[0];
-    return `Well, **${worst.name}** has died **${worst.deaths}** times... definitely the server's favorite punching bag! 💀`;
-  }
-
-  if (target) {
-    if (query.includes('weakness')) {
-      const insight = target.insights.find(i => i.type === 'bad');
-      if (insight) return `A glaring weakness for **${target.name}**: ${insight.text}`;
-      if (target.deaths > 100) return `**${target.name}** dies way too often (${target.deaths} deaths). They need to play safer!`;
-      return `Honestly, **${target.name}** is playing solidly. Hard to find a major weakness right now!`;
-    }
-    if (query.includes('good') || query.includes('strength') || query.includes('best thing')) {
-      const insight = target.insights.find(i => i.type === 'good');
-      if (insight) return `**${target.name}**'s biggest strength: ${insight.text}`;
-      return `**${target.name}** has a great playstyle (${target.playstyle}). Very consistent!`;
-    }
-    if (query.includes('stats')) {
-      return `**${target.name}** Stats:\n- Rank: ${target.rank.title}\n- Kills: ${target.total_mob_kills}\n- Deaths: ${target.deaths}\n- K/D: ${target.kd}\n- Score: ${fmtNum(target.bas_score)}`;
-    }
-  }
-
-  return "I have analyzed the server data! You can ask me things like 'Who is the best?', 'What is [Player]'s weakness?', or 'Who has the most kills?'.";
-}
-
-$('chatSend').addEventListener('click', async () => {
-  const val = $('chatInput').value.trim();
-  if(!val) return;
-  appendMessage('user', val);
-  $('chatInput').value = '';
-  
-  // Show typing indicator
-  const typingId = 'typing-' + Date.now();
-  const div = document.createElement('div');
-  div.className = `chat-msg bot`;
-  div.id = typingId;
-  div.innerHTML = `<div class="chat-bubble" style="opacity:0.7"><em>Analyzing server data...</em></div>`;
-  $('chatBody').appendChild(div);
-  $('chatBody').scrollTop = $('chatBody').scrollHeight;
-
-  try {
-    // We send a tiny subset of PLAYERS stats to save token size
-    const miniStats = PLAYERS.map(p => ({ name: p.name, bas: p.bas_score, rank: p.rank.title, kills: p.total_mob_kills, deaths: p.deaths, kd: p.kd }));
-    
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: val, statsContext: JSON.stringify(miniStats) })
-    });
-    
-    $(typingId).remove();
-
-    if (!res.ok) throw new Error("API failed");
-    
-    const data = await res.json();
-    appendMessage('bot', data.reply.replace(/\n/g, '<br>'));
-    
-  } catch (err) {
-    $(typingId).remove();
-    console.log("Falling back to local basic AI because Vercel backend isn't active or failed:", err);
-    // Fallback if running locally without backend
-    const reply = getAiResponse(val);
-    appendMessage('bot', reply.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'));
-  }
-});
-$('chatInput').addEventListener('keypress', e => { if(e.key === 'Enter') $('chatSend').click(); });
 
 // ── INIT ────────────────────────────────────────────────────────────────
 initServerAI();

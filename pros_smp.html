@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pros Minecraft SMP | AI-Powered Server Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://unpkg.com/skinview3d@3.0.0-alpha.1/bundles/skinview3d.bundle.js"></script>
+</head>
+<body>
+
+  <!-- Loading Overlay -->
+  <div id="loader" class="loader-overlay">
+    <div class="spinner"></div>
+    <div class="loader-text">Initializing AI Engine...</div>
+  </div>
+
+  <div class="bg-gradient"></div>
+
+  <!-- Navbar -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-icon">⚔️</span>
+        <div class="brand-text">
+          <h1>Pros SMP</h1>
+          <span>AI-Powered Tracking</span>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="index.html" class="nav-btn" style="text-decoration:none;">⬅️ Hub</a>
+        <button class="nav-btn active" data-target="home">🏠 Dashboard</button>
+        <button class="nav-btn" data-target="battle">⚔️ Rival Battles</button>
+        <button class="nav-btn" data-target="leaderboard">🏆 Leaderboards</button>
+      </nav>
+      <div class="header-right">
+        <div class="status-badge">
+          <span class="pulse-dot"></span> Server Heat: <span id="serverHeat">Loading...</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- HOME SECTION -->
+    <section id="sec-home" class="view-section active">
+      
+      <!-- Dominator Banner -->
+      <div class="dominator-banner" id="dominatorBanner" style="display:none;">
+        <div class="dom-icon">👑</div>
+        <div class="dom-text">
+          <span>Server Dominator Detected</span>
+          <h2 id="domName">PlayerName</h2>
+        </div>
+        <div class="dom-stats">
+          Most PvP Kills: <strong id="domKills">0</strong>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="hero">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="globalSearch" placeholder="Search for a player..." autocomplete="off"/>
+        </div>
+      </div>
+
+      <div class="section-heading">
+        <h2>👥 Server Roster</h2>
+      </div>
+      <div class="players-grid" id="playersGrid"></div>
+
+    </section>
+
+    <!-- RIVAL BATTLES SECTION -->
+    <section id="sec-battle" class="view-section">
+      <div class="section-heading">
+        <h2>⚔️ Ultimate Rival Battles</h2>
+        <p style="color:var(--text-muted)">Select two players to compare and simulate a battle.</p>
+      </div>
+      
+      <div class="battle-selector">
+        <select id="battleSelect1"></select>
+        <span style="font-size:1.5rem; font-weight:800; color:var(--ba-primary); margin: 0 1rem;">VS</span>
+        <select id="battleSelect2"></select>
+        <button class="btn-action" id="btnFight" style="margin-left: 1rem;">Simulate Battle</button>
+      </div>
+
+      <div class="battle-arena" id="battleArena" style="display:none;">
+        <div class="fighter f-left">
+          <img id="bfAvatar1" src="" class="bf-avatar" />
+          <h2 id="bfName1">P1</h2>
+          <div class="bf-score" id="bfScore1">0</div>
+        </div>
+        <div class="vs-burst">VS</div>
+        <div class="fighter f-right">
+          <img id="bfAvatar2" src="" class="bf-avatar" />
+          <h2 id="bfName2">P2</h2>
+          <div class="bf-score" id="bfScore2">0</div>
+        </div>
+      </div>
+      
+      <div id="battleResult" class="battle-result" style="display:none;">
+        <h1 id="brWinner">WINNER: P1</h1>
+        <p id="brReason">Based on Ultimate BAS Score</p>
+      </div>
+
+      <!-- ADVANCED COMPARISON PANEL -->
+      <div id="comparePanel" class="compare-panel" style="display:none;">
+        <div class="compare-header">
+          <h2>📊 Advanced Stat Comparison</h2>
+          <p style="color:var(--text-muted)">Fair, unbiased breakdown across all stat categories</p>
+        </div>
+
+        <!-- Overall Verdict -->
+        <div class="compare-verdict" id="compareVerdict"></div>
+
+        <!-- Rival Radar Chart -->
+        <div class="chart-box-large" style="margin-bottom: 2rem;">
+          <canvas id="rivalRadarChart"></canvas>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="compare-tabs">
+          <button class="ctab active" data-ctab="core">🎯 Core</button>
+          <button class="ctab" data-ctab="combat">⚔️ Combat</button>
+          <button class="ctab" data-ctab="mining">⛏️ Mining</button>
+          <button class="ctab" data-ctab="movement">🏃 Movement</button>
+          <button class="ctab" data-ctab="items">📦 Items</button>
+          <button class="ctab" data-ctab="efficiency">🧠 Efficiency</button>
+        </div>
+
+        <!-- Comparison Rows -->
+        <div id="ctab-core" class="ctab-pane active"></div>
+        <div id="ctab-combat" class="ctab-pane"></div>
+        <div id="ctab-mining" class="ctab-pane"></div>
+        <div id="ctab-movement" class="ctab-pane"></div>
+        <div id="ctab-items" class="ctab-pane"></div>
+        <div id="ctab-efficiency" class="ctab-pane"></div>
+
+        <!-- Score Summary -->
+        <div class="compare-summary" id="compareSummary"></div>
+      </div>
+
+    </section>
+
+    <!-- DASHBOARD SECTION -->
+    <section id="sec-leaderboard" class="view-section">
+      
+      <!-- Top Header / Title -->
+      <div style="text-align:center; margin-bottom: 2rem;">
+        <h1 style="font-size: 2.5rem; font-weight: 800; letter-spacing: 1px; color:#fff;">MINECRAFT SERVER STATS</h1>
+        <p style="color:var(--text-muted); margin-top: 0.5rem;">Explore block-by-block records, achievements, and statistics from the vanilla survival world.</p>
+        <div style="margin-top: 1.5rem;">
+          <input type="text" id="dashSearch" placeholder="Search players..." style="background:var(--bg-card); border:1px solid var(--border-light); color:#fff; padding:0.8rem 1.5rem; border-radius:30px; width:100%; max-width:400px; font-family:var(--font-main);" />
+        </div>
+      </div>
+
+      <!-- 8 Summary Cards -->
+      <div class="dash-summary-grid">
+        <div class="dash-card summary-card">
+          <div class="ds-title">TOTAL PLAYTIME</div>
+          <div class="ds-val" id="dsPlaytime">0d 0h</div>
+        </div>
+        <div class="dash-card summary-card">
+          <div class="ds-title">TOTAL DEATHS</div>
+          <div class="ds-val" id="dsDeaths">0</div>
+        </div>
+        <div class="dash-card summary-card">
+          <div class="ds-title">BLOCKS MINED</div>
+          <div class="ds-val" id="dsMined">0</div>
+        </div>
+        <div class="dash-card summary-card">
+          <div class="ds-title">ITEMS CRAFTED</div>
+          <div class="ds-val" id="dsCrafted">0</div>
+        </div>
+        <div class="dash-card summary-card">
+          <div class="ds-title">MOB KILLS</div>
+          <div class="ds-val" id="dsMobKills">0</div>
+        </div>
+        <div class="dash-card summary-card">
+          <div class="ds-title">PLAYER KILLS</div>
+          <div class="ds-val" id="dsPvPKills">0</div>
+        </div>
+        <div class="dash-card summary-card">
+          <div class="ds-title">DISTANCE TRAVELED</div>
+          <div class="ds-val" id="dsDistance">0 km</div>
+        </div>
+        <div class="dash-card summary-card">
+          <div class="ds-title">TOTAL PLAYERS</div>
+          <div class="ds-val" id="dsPlayers">0</div>
+        </div>
+      </div>
+
+      <!-- Player Leaderboards -->
+      <div class="dash-three-grid">
+        <div class="dash-card">
+          <h3 class="dash-col-title">MOST PLAYTIME</h3>
+          <div id="colPlaytime" class="stat-list"></div>
+        </div>
+        <div class="dash-card">
+          <h3 class="dash-col-title">MOST BLOCKS MINED</h3>
+          <div id="colMined" class="stat-list"></div>
+        </div>
+        <div class="dash-card">
+          <h3 class="dash-col-title">MOST MOB KILLS</h3>
+          <div id="colKills" class="stat-list"></div>
+        </div>
+      </div>
+
+      <!-- Global Resource Leaderboards -->
+      <div class="dash-three-grid" style="margin-top:2rem;">
+        <div class="dash-card">
+          <h3 class="dash-col-title">TOP MINED BLOCKS</h3>
+          <div id="colGlobalBlocks" class="stat-list"></div>
+        </div>
+        <div class="dash-card">
+          <h3 class="dash-col-title">TOP USED ITEMS</h3>
+          <div id="colGlobalItems" class="stat-list"></div>
+        </div>
+        <div class="dash-card">
+          <h3 class="dash-col-title">TOP KILLED MOBS</h3>
+          <div id="colGlobalMobs" class="stat-list"></div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- PLAYER PROFILE MODAL -->
+  <div id="playerProfile" class="profile-overlay">
+    <div class="profile-container" id="exportCard">
+      
+      <div class="profile-top-bar">
+        <button class="btn-icon" id="closeProfile">❌</button>
+        <div class="profile-actions">
+          <button class="btn-action" id="btnDownload">📸 Export Flex Card</button>
+        </div>
+      </div>
+
+      <!-- Player Header (New Slate Layout) -->
+      <div class="slate-card profile-main-card">
+        <div class="pmc-top">
+          <div id="skinContainer" class="p-avatar-3d"></div>
+          <div class="pmc-info">
+            <div style="display:flex; align-items:center; gap: 1rem;">
+              <h1 id="pName" style="margin:0;">PlayerName</h1>
+              <button id="btnFavorite" style="font-size:1.5rem; background:transparent; border:none; cursor:pointer; padding:0; line-height:1; transition: transform 0.2s;" title="Toggle Favorite">🤍</button>
+            </div>
+            <div class="uuid-text" id="pUuid" style="margin-top:0.2rem;">UUID-HERE</div>
+            <div id="pRankBadge" style="margin-top: 0.5rem; display:inline-block; padding: 0.3rem 0.8rem; border-radius: 20px; font-weight:bold; font-size: 0.8rem; border: 1px solid var(--border-light);">RANK</div>
+          </div>
+          <div class="pmc-actions">
+            <button class="btn-action-outline" id="btnCompareProf">⚔️ Compare</button>
+            <button class="btn-action-outline" id="btnCopyStats">📋 Copy Stats</button>
+            <button class="btn-action-outline" id="btnDownload">📸 Share Stats</button>
+          </div>
+        </div>
+        <div class="pmc-stats">
+          <div class="pmc-stat-box">
+            <div class="ps-label">PLAYTIME</div>
+            <div class="ps-val" id="psPlaytime" style="color: #4ade80;">0d 0h</div>
+          </div>
+          <div class="pmc-stat-box">
+            <div class="ps-label">BLOCKS MINED</div>
+            <div class="ps-val" id="psMined" style="color: #fbbf24;">0</div>
+          </div>
+          <div class="pmc-stat-box">
+            <div class="ps-label">MOB KILLS</div>
+            <div class="ps-val" id="psKills" style="color: #22c55e;">0</div>
+          </div>
+          <div class="pmc-stat-box">
+            <div class="ps-label">DEATHS</div>
+            <div class="ps-val" id="psDeaths" style="color: #ef4444;">0</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Better_Ansh Score Breakdown Card -->
+      <div class="slate-card score-breakdown-card" style="flex-direction:column; align-items:stretch;">
+        <div style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom: 1rem;">
+          <div class="sbc-left">
+            <div class="ps-label">BETTER_ANSH SCORE</div>
+            <div class="score-pill">⭐ <span id="pBas">0</span> pts</div>
+          </div>
+          <div class="sbc-center" id="scoreMath">
+            <!-- Populated by JS -->
+          </div>
+          <div class="sbc-right">
+            <div class="ps-label">PvP K/D</div>
+            <div class="ps-val" style="color:#fff;" id="pPvPKD">0.00</div>
+          </div>
+        </div>
+        
+        <!-- LEVEL PROGRESS BAR -->
+        <div class="level-bar-container" style="background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 12px; border: 1px solid var(--border-light);">
+          <div style="display:flex; justify-content:space-between; margin-bottom: 0.5rem; font-family:var(--font-mono); font-size:0.9rem; font-weight:bold;">
+            <span>Level <span id="pLevelText" style="color:var(--ba-primary);">1</span></span>
+            <span id="pNextLevelText" style="color:var(--text-muted);">0 / 500 pts</span>
+          </div>
+          <div style="height: 12px; background: rgba(0,0,0,0.5); border-radius: 10px; overflow:hidden; border: 1px solid rgba(255,255,255,0.1);">
+            <div id="pLevelFill" style="height: 100%; width: 0%; background: linear-gradient(90deg, rgba(57,255,20,0.6), var(--ba-primary)); box-shadow: 0 0 10px var(--ba-primary); transition: width 1s ease-in-out;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Achievements Card -->
+      <div class="slate-card" style="margin-bottom: 2rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+          <div class="ps-label" style="font-size:1rem; margin:0;">🏆 ACHIEVEMENTS</div>
+          <span id="pAchCount" style="font-size:0.8rem; font-weight:bold; color:var(--text-muted);">0 / 16 unlocked</span>
+        </div>
+        <div id="achievementsGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 1rem;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Profile Charts Row -->
+      <div class="profile-charts-row" style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem;">
+        <div class="slate-card chart-slate">
+          <div class="ps-label" style="margin-bottom:1rem;">⚔️ KILLS VS DEATHS</div>
+          <div style="height: 250px;"><canvas id="chartKdBar"></canvas></div>
+        </div>
+        <div class="slate-card chart-slate">
+          <div class="ps-label" style="margin-bottom:1rem;">🏃 DISTANCE BY TYPE (M)</div>
+          <div style="height: 250px;"><canvas id="chartDistBar"></canvas></div>
+        </div>
+        <div class="slate-card chart-slate">
+          <div class="ps-label" style="margin-bottom:1rem;">📊 ACTIVITY DISTRIBUTION</div>
+          <div style="height: 250px;"><canvas id="chartActivityPie"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="profile-tabs">
+        <button class="ptab active" data-tab="ai">🤖 AI Insights</button>
+        <button class="ptab" data-tab="timeline">📈 Story Mode</button>
+        <button class="ptab" data-tab="mining">⛏️ Mined & Dropped</button>
+        <button class="ptab" data-tab="mobs">💀 Mobs & Deaths</button>
+        <button class="ptab" data-tab="crafting">🔨 Crafted & Used</button>
+      </div>
+
+      <div class="tab-content-area">
+        
+        <!-- AI Insights Tab -->
+        <div id="tab-ai" class="tab-pane active">
+          <div class="mobs-split">
+            <div class="ai-grid" id="aiInsightsGrid" style="flex:1;"></div>
+            <div class="chart-box-large" style="flex:1; display:flex; align-items:center; justify-content:center;">
+              <canvas id="skillRadarChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Story Mode (Timeline) -->
+        <div id="tab-timeline" class="tab-pane">
+          <h3>Simulated 30-Day Growth (AI Generated)</h3>
+          <div class="chart-box-large">
+            <canvas id="timelineChart"></canvas>
+          </div>
+        </div>
+
+        <!-- All Blocks Mined (Scrollable) -->
+        <div id="tab-mining" class="tab-pane">
+          <!-- Doughnut Chart Section -->
+          <div class="chart-box-large" style="height:300px; margin-bottom: 2rem;">
+            <canvas id="miningDoughnutChart"></canvas>
+          </div>
+          <div class="mobs-split">
+            <div class="mass-grid-wrap">
+              <h3>All Blocks Mined</h3>
+              <div class="stat-list" id="allMinedGrid"></div>
+            </div>
+            <div class="mass-grid-wrap">
+              <h3>Items Dropped</h3>
+              <div class="stat-list" id="allDroppedGrid"></div>
+            </div>
+          </div>
+          <div class="mass-grid-wrap" style="margin-top:2rem">
+            <h3>Items Picked Up</h3>
+            <div class="stat-list" id="allPickedGrid"></div>
+          </div>
+        </div>
+
+        <!-- Mobs & Deaths Tab -->
+        <div id="tab-mobs" class="tab-pane">
+          <!-- Bar Chart Section -->
+          <div class="chart-box-large" style="height:300px; margin-bottom: 2rem;">
+            <canvas id="mobsBarChart"></canvas>
+          </div>
+          <div class="mobs-split">
+            <div class="mass-grid-wrap">
+              <h3>Mobs Killed</h3>
+              <div class="stat-list" id="allKilledGrid"></div>
+            </div>
+            <div class="mass-grid-wrap">
+              <h3>Killed By</h3>
+              <div class="stat-list" id="allKilledByGrid"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Crafting Tab -->
+        <div id="tab-crafting" class="tab-pane">
+          <div class="mobs-split">
+            <div class="mass-grid-wrap">
+              <h3>Items Crafted</h3>
+              <div class="stat-list" id="allCraftedGrid"></div>
+            </div>
+            <div class="mass-grid-wrap">
+              <h3>Items Used / Broken</h3>
+              <div class="stat-list" id="allUsedGrid"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="f-brand">⚔️ Pros Minecraft SMP</div>
+      <div class="f-text">God-Tier AI-Powered Minecraft Dashboard</div>
+      <div class="f-upd">Data Sync: <span id="fDate"></span></div>
+    </div>
+  </footer>
+
+  <!-- AI CHATBOT WIDGET -->
+  <div class="chat-widget" id="chatWidget">
+    <div class="chat-fab" id="chatFab">🤖</div>
+    <div class="chat-window" id="chatWindow">
+      <div class="chat-header">
+        <div class="chat-header-info">
+          <span class="ai-bot-icon">🤖</span>
+          <div>
+            <h3>Better_Ansh AI</h3>
+            <span>Online</span>
+          </div>
+        </div>
+        <button class="chat-close" id="chatClose">✖</button>
+      </div>
+      <div class="chat-body" id="chatBody">
+        <div class="chat-msg bot">
+          <div class="chat-bubble">Hello! I am the Server AI. Ask me about any player's stats, weaknesses, or ask who is the best!</div>
+        </div>
+      </div>
+      <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="Ask something..." autocomplete="off" />
+        <button id="chatSend">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="data_pros.js?v=1"></script>
+  <script src="app.js?v=2"></script>
+</body>
+</html>
