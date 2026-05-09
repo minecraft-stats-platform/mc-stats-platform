@@ -41,6 +41,26 @@
     .server-card.disabled:hover { transform: none; box-shadow: none; border-color: var(--border-light); }
     .server-card.disabled::after { display: none; }
     .server-card.disabled .sc-icon { filter: grayscale(1); }
+
+    @keyframes pulse-live {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .badge-live {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: #ef4444;
+      color: #fff;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      animation: pulse-live 2s infinite;
+      z-index: 10;
+    }
   </style>
 </head>
 <body>
@@ -61,6 +81,7 @@
 
     <!-- Pros Minecraft SMP -->
     <a href="pros_smp.html" class="server-card">
+      <div class="badge-live">ONGOING 🔥</div>
       <div class="sc-icon">⚔️</div>
       <div class="sc-title">Pros Minecraft SMP</div>
       <div class="sc-desc">Season 1 • Ultimate Stats</div>
