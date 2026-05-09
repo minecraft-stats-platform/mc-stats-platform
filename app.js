@@ -171,26 +171,43 @@ function renderDashboard() {
   };
 
   const topTime = [...PLAYERS].sort((a, b) => b.play_time_hrs - a.play_time_hrs).slice(0, 5);
-  $('colPlaytime').innerHTML = renderMiniRank(topTime, 'play_time_hrs', fmtTime);
+  if ($('colPlaytime')) $('colPlaytime').innerHTML = renderMiniRank(topTime, 'play_time_hrs', fmtTime);
 
   const topMined = [...PLAYERS].sort((a, b) => b.blocks_mined - a.blocks_mined).slice(0, 5);
-  $('colMined').innerHTML = renderMiniRank(topMined, 'blocks_mined');
+  if ($('colMined')) $('colMined').innerHTML = renderMiniRank(topMined, 'blocks_mined');
 
   const topKills = [...PLAYERS].sort((a, b) => b.total_mob_kills - a.total_mob_kills).slice(0, 5);
-  $('colKills').innerHTML = renderMiniRank(topKills, 'total_mob_kills');
+  if ($('colKills')) $('colKills').innerHTML = renderMiniRank(topKills, 'total_mob_kills');
+
+  // New Pros SMP Specific Leaderboards
+  const topPvP = [...PLAYERS].sort((a, b) => b.player_kills - a.player_kills).slice(0, 5);
+  if ($('colPvP')) $('colPvP').innerHTML = renderMiniRank(topPvP, 'player_kills');
+
+  const topDeaths = [...PLAYERS].sort((a, b) => b.deaths - a.deaths).slice(0, 5);
+  if ($('colDeaths')) $('colDeaths').innerHTML = renderMiniRank(topDeaths, 'deaths');
+
+  const topKD = [...PLAYERS].sort((a, b) => b.kd - a.kd).slice(0, 5);
+  if ($('colKD')) $('colKD').innerHTML = renderMiniRank(topKD, 'kd');
 
   const aggBlocks = {};
   const aggUsed = {};
   const aggMobs = {};
+  const aggCrafted = {};
+  const aggDropped = {};
+
   PLAYERS.forEach(p => {
     for (let k in p.mined_obj) aggBlocks[k] = (aggBlocks[k] || 0) + p.mined_obj[k];
     for (let k in p.used_obj) aggUsed[k] = (aggUsed[k] || 0) + p.used_obj[k];
     for (let k in p.killed_obj) aggMobs[k] = (aggMobs[k] || 0) + p.killed_obj[k];
+    for (let k in p.crafted_obj) aggCrafted[k] = (aggCrafted[k] || 0) + p.crafted_obj[k];
+    for (let k in p.dropped_obj) aggDropped[k] = (aggDropped[k] || 0) + p.dropped_obj[k];
   });
 
   const topAggBlocks = Object.entries(aggBlocks).sort((a,b)=>b[1]-a[1]).slice(0,5);
   const topAggUsed = Object.entries(aggUsed).sort((a,b)=>b[1]-a[1]).slice(0,5);
   const topAggMobs = Object.entries(aggMobs).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const topAggCrafted = Object.entries(aggCrafted).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const topAggDropped = Object.entries(aggDropped).sort((a,b)=>b[1]-a[1]).slice(0,5);
 
   const renderAggRank = (arr, type) => {
     return arr.map(([k, v]) => {
@@ -208,9 +225,12 @@ function renderDashboard() {
     }).join('');
   };
 
-  $('colGlobalBlocks').innerHTML = renderAggRank(topAggBlocks, 'blocks');
-  $('colGlobalItems').innerHTML = renderAggRank(topAggUsed, 'blocks');
-  $('colGlobalMobs').innerHTML = renderAggRank(topAggMobs, 'mobs');
+  if ($('colGlobalBlocks')) $('colGlobalBlocks').innerHTML = renderAggRank(topAggBlocks, 'blocks');
+  if ($('colGlobalItems')) $('colGlobalItems').innerHTML = renderAggRank(topAggUsed, 'blocks');
+  if ($('colGlobalMobs')) $('colGlobalMobs').innerHTML = renderAggRank(topAggMobs, 'mobs');
+  
+  if ($('colGlobalCrafted')) $('colGlobalCrafted').innerHTML = renderAggRank(topAggCrafted, 'blocks');
+  if ($('colGlobalDropped')) $('colGlobalDropped').innerHTML = renderAggRank(topAggDropped, 'blocks');
 }
 
 // ── RIVAL BATTLES (GOD TIER) ───────────────────────────────────────────
