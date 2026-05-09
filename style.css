@@ -25,11 +25,22 @@
 }
 
 html { scroll-behavior: smooth; }
-body { background-color: var(--bg-base); color: var(--text-main); font-family: var(--font-main); min-height: 100vh; overflow-x: hidden; }
+body {
+  background: url('bg.png') no-repeat center center fixed;
+  background-size: cover;
+  color: var(--text-main);
+  font-family: var(--font-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-/* BG Gradient */
+/* BG Overlay */
 .bg-gradient {
-  display: none; /* Removed for cleaner solid slate look */
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: rgba(3, 7, 18, 0.65); /* Dark transparent overlay */
+  backdrop-filter: blur(6px); /* Blurs the minecraft background slightly */
 }
 
 .loader-overlay { position: fixed; inset: 0; background: var(--bg-base); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.5s; }
