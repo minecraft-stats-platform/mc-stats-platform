@@ -348,14 +348,58 @@ body {
 .summary-card .sc-val.p1 { color: var(--ba-primary); }
 .summary-card .sc-val.p2 { color: var(--ba-secondary); }
 
-@media(max-width: 900px) {
-  .profile-header { flex-direction: column; text-align: center; }
-  .p-name-wrap { justify-content: center; }
+@media (max-width: 768px) {
+  /* Layout & Header */
+  .header-inner { padding: 0.8rem 1rem; justify-content: center; }
+  .brand { margin-bottom: 0.5rem; }
+  .nav-links { width: 100%; justify-content: center; overflow-x: auto; padding-bottom: 5px; }
+  .nav-btn { padding: 0.5rem 0.8rem; font-size: 0.8rem; }
+  .container { padding: 1rem; }
+  .section-heading h2 { font-size: 1.4rem; }
+
+  /* Dashboard Summary */
+  .dash-summary-grid { grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+  .summary-card { height: 100px; padding: 1rem; }
+  .ds-val { font-size: 1.4rem; }
+
+  /* Profile Modal */
+  .profile-container { padding: 1.2rem; border-radius: 0; }
+  .profile-main-card .pmc-top { flex-direction: column; align-items: center; text-align: center; }
+  .pmc-actions { width: 100%; justify-content: center; flex-wrap: wrap; }
+  .pmc-stats { gap: 1.5rem; justify-content: center; text-align: center; }
+  .pmc-stat-box { min-width: 100px; }
+  .score-breakdown-card { flex-direction: column; text-align: center; }
+  .sbc-right { text-align: center; }
+  .profile-charts-row { grid-template-columns: 1fr; }
+  .profile-tabs { gap: 0.5rem; }
+  .ptab { padding: 0.5rem 1rem; font-size: 0.85rem; }
+
+  /* Battle System */
+  .battle-arena { flex-direction: column; gap: 2rem; padding: 2rem 1rem; }
+  .vs-burst { font-size: 3rem; }
+  .battle-selector { flex-direction: column; width: 100%; }
+  .battle-selector select { width: 100%; }
+  .btn-action { width: 100%; }
+
+  /* Compare Grid */
+  .cmp-row { 
+    grid-template-columns: 1fr 1fr; 
+    grid-template-rows: auto auto;
+    gap: 0.5rem;
+    padding: 1.5rem 1rem;
+  }
+  .cmp-label { grid-column: span 2; order: -1; font-size: 0.7rem; }
+  .cmp-val.left { text-align: left; }
+  .cmp-val.right { text-align: right; }
+  .cmp-bar { grid-column: span 2; height: 6px; }
+
+  /* Hub & Grids */
   .mobs-split { grid-template-columns: 1fr; }
-  .battle-arena { flex-direction: column; gap: 2rem; }
-  .battle-selector { flex-direction: column; align-items: center; }
-  .lb-row { flex-wrap: wrap; gap: 1rem; }
-  .cmp-row { grid-template-columns: 1fr 1fr 100px 1fr 1fr; font-size: 0.85rem; gap: 0.4rem; }
+  .dash-three-grid { grid-template-columns: 1fr; }
+  .players-grid { grid-template-columns: 1fr; }
+  
+  /* AI Chatbot */
+  .chat-window { width: calc(100vw - 2rem); right: -1rem; bottom: 70px; }
 }
 
 /* ── AI CHATBOT WIDGET ─────────────────────────────────────────────── */
