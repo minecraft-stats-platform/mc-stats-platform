@@ -43,6 +43,7 @@ NAME_MAP = {
     "41cae289-aab6-3d0e-ab10-4533b37cb8a0": "Harsh",
     "00000000-0000-0000-0009-01f99c138e25": ".Ansh Gamer1988",
     "aa657135-12d8-37cb-89d1-630104316033": "Bettet_Ansh",
+    "00000000-0000-0000-0009-01fde9be7525": "Ankit_Friend",
     "38080364-a265-30bd-b16f-2275ae1926e7": "Unknown_Player_1",
     "713274ba-0c4c-399f-94fe-e92af7605076": "Unknown_Player_2"
 }

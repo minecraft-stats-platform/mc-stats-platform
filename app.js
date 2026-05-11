@@ -37,6 +37,25 @@ const itemEmoji = item => {
   return '📦';
 };
 
+const getIconHtml = (rawName, type) => {
+  if (type === 'mobs') {
+    return `
+      <div class="mc-icon-wrapper" style="display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;">
+        <img src="./textures/item/${rawName}_spawn_egg.png" 
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';" 
+             class="mc-logo-sm" alt="" />
+        <span style="display:none; font-size:1.2rem">${mobEmoji(rawName)}</span>
+      </div>`;
+  }
+  return `
+    <div class="mc-icon-wrapper" style="display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;">
+      <img src="./textures/item/${rawName}.png" 
+           onerror="this.onerror=null; this.src='./textures/block/${rawName}.png'; this.setAttribute('onerror', 'this.style.display=\'none\'; this.nextElementSibling.style.display=\'inline-block\';');"
+           class="mc-logo-sm" alt="" />
+      <span style="display:none; font-size:1.2rem">${itemEmoji(rawName)}</span>
+    </div>`;
+};
+
 // Remove Loader
 window.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
@@ -213,7 +232,7 @@ function renderDashboard() {
     return arr.map(([k, v]) => {
       let rawName = k.replace('minecraft:', '');
       let name = rawName.replace(/_/g, ' ');
-      let icon = type === 'blocks' ? `<img src="https://cdn.jsdelivr.net/gh/PrismarineJS/minecraft-assets@master/data/1.19.2/items/${rawName}.png" onerror="this.onerror=null; this.src='https://cdn.jsdelivr.net/gh/PrismarineJS/minecraft-assets@master/data/1.19.2/blocks/${rawName}.png';" class="mc-logo-sm" alt=""/>` : `<span style="font-size:1.2rem">${mobEmoji(rawName)}</span>`;
+      let icon = getIconHtml(rawName, type);
       return `
         <div class="stat-row" style="padding:0.5rem;">
           <div class="stat-row-top">
@@ -707,14 +726,7 @@ function renderMassGrid(id, dataObj, type) {
     let rawName = k.replace('minecraft:', '');
     let name = rawName.replace(/_/g, ' ');
     
-    let iconHtml = '';
-    if (type === 'blocks') {
-      iconHtml = `<img src="https://cdn.jsdelivr.net/gh/PrismarineJS/minecraft-assets@master/data/1.19.2/items/${rawName}.png" 
-                       onerror="this.onerror=null; this.src='https://cdn.jsdelivr.net/gh/PrismarineJS/minecraft-assets@master/data/1.19.2/blocks/${rawName}.png';"
-                       class="mc-logo-sm" alt="" />`;
-    } else {
-      iconHtml = `<span style="font-size:1.2rem">${mobEmoji(rawName)}</span>`;
-    }
+    let iconHtml = getIconHtml(rawName, type);
 
     const pct = Math.max(0, Math.min(100, (v / maxVal) * 100));
 
