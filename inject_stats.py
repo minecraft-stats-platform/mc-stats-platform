@@ -45,7 +45,8 @@ NAME_MAP = {
     "aa657135-12d8-37cb-89d1-630104316033": "Bettet_Ansh",
     "00000000-0000-0000-0009-01fde9be7525": "Ankit_Friend",
     "38080364-a265-30bd-b16f-2275ae1926e7": "Unknown_Player_1",
-    "713274ba-0c4c-399f-94fe-e92af7605076": "Unknown_Player_2"
+    "713274ba-0c4c-399f-94fe-e92af7605076": "Unknown_Player_2",
+    "2e2cd66c-e540-351d-945e-c1c7891fae99": "Unknown_Player_3"
 }
 
 print(f"Reading stats from: {target_stats_dir}")
