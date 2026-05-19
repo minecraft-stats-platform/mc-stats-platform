@@ -4,7 +4,7 @@
 
 // TEAMS CONFIG
 const TEAMS = {
-  a: { name: "Team Alpha", short: "T-A", members: ["godxankit", "better_ansh", "adavya2193", "ansh gamer1988", "bettet_ansh", "ankit_friend"] },
+  a: { name: "Team Alpha", short: "T-A", members: ["godxankit", "better_ansh", "adavya2193", "ansh gamer1988", "bettet_ansh", "lokesh"] },
   b: { name: "Team Beta", short: "T-B", members: ["kunal2010", "nitish_gamer45", "harshisop13", "deadly_kunal", "harsh"] }
 };
 
@@ -407,7 +407,7 @@ const RAW_PLAYERS = [
     }
   },
   {
-    "name": "Ankit_Friend",
+    "name": "Lokesh",
     "uuid": "00000000-0000-0000-0009-01fde9be7525",
     "stats": {
       "minecraft:killed": {
@@ -4584,7 +4584,7 @@ const RAW_PLAYERS = [
     }
   }
 ];
-const LAST_UPDATED = "2026-05-19 19:13:23";
+const LAST_UPDATED = "2026-05-19 19:21:13";
 
 const totalSrvKills = RAW_PLAYERS.reduce((s,p) => {
   const c = p.stats['minecraft:custom'] || {};

@@ -4,7 +4,7 @@
 
 // TEAMS CONFIG
 const TEAMS = {
-  a: { name: "Team Alpha", short: "T-A", members: ["godxankit", "better_ansh", "adavya2193", "ansh gamer1988", "bettet_ansh", "ankit_friend"] },
+  a: { name: "Team Alpha", short: "T-A", members: ["godxankit", "better_ansh", "adavya2193", "ansh gamer1988", "bettet_ansh", "lokesh"] },
   b: { name: "Team Beta", short: "T-B", members: ["kunal2010", "nitish_gamer45", "harshisop13", "deadly_kunal", "harsh"] }
 };
 
