@@ -6716,7 +6716,7 @@ const PLAYERS = RAW_PLAYERS.map(raw => {
       play_time_hrs: parseFloat((play_time_raw / 72000).toFixed(1)),
       deaths: c['minecraft:deaths'] || 0,
       player_kills: c['minecraft:player_kills'] || 0,
-      total_mob_kills: c['minecraft:mob_kills'] || 0,
+      total_mob_kills: Math.max(c['minecraft:mob_kills'] || 0, Object.values(k).reduce((a,b)=>a+b, 0)),
       blocks_mined: Object.values(m).reduce((a,b)=>a+b, 0),
       damage_dealt: c['minecraft:damage_dealt'] || 0,
       damage_taken: c['minecraft:damage_taken'] || 0,
